@@ -1,29 +1,3 @@
-
-const generateEngineers = engineerArr => {
-    if (engineerArr === []) {
-        return "";
-    } else {
-        return engineerArr.map(engineer => {
-            // return HTML
-        })
-    }
-};
-
-const generateInterns = internArr => {
-    if (internArr === []) {
-        return "";
-    } else {
-        return internArr.map(intern => {
-            // return HTML
-        })
-    }
-};
-
-module.exports = userData => {
-
-    const {managerName, managerID, managerEmail, managerOfficeNum, interns, engineers} = userData;
-
-return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -185,6 +159,4 @@ return `
     </main>
     
 </body>
-</html>      
-`
-};
+</html>
