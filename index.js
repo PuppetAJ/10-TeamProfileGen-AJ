@@ -80,16 +80,25 @@ const promptList = promptData => {
 
         }
     ]).then(data => {
-        if(data.nextEmployee === 0) {
-            promptEngineer(promptData);
-        }
-        if (data.nextEmployee === 1) {
-            promptIntern(promptData);
-        }
-        if (data.nextEmployee === 2) {
-            // return promptData;
+        if (promptData.engineers.length + promptData.interns.length === 4) {
+
             console.log(promptData);
+            
+        } else {
+
+            if (data.nextEmployee === 0) {
+                promptEngineer(promptData);
+            }
+            if (data.nextEmployee === 1) {
+                promptIntern(promptData);
+            }
+            if (data.nextEmployee === 2) {
+                // return promptData;
+                console.log(promptData);
+            }
+
         }
+
     })
 };
 
