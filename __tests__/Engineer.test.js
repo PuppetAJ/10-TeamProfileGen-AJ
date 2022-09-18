@@ -6,6 +6,7 @@ test('Creates an engineer object', () => {
     expect(engineer).toEqual(expect.any(Object));
 
     expect(engineer.name).toBe('Test');
+    expect(engineer.name).toEqual(expect.any(String));
     expect(engineer.id).toEqual(expect.any(Number));
     expect(engineer.email).toEqual(expect.any(String));
 });
@@ -35,7 +36,7 @@ test("Returns string containing engineer's github", () => {
     const engineer = new Engineer('Test', 2, 'Test', 'Test');
 
     expect(engineer.getGitHub()).toEqual(expect.any(String));
-    expect(engineer.getGitHub()).toBe("Engineer's office number is Test");
+    expect(engineer.getGitHub()).toBe("Engineer's github is Test");
 });
 
 test("Returns Employee's role", () => {
