@@ -3,6 +3,8 @@ const fs = require('fs');
 const writeFile = fileContent => {
 
 let cssContent = `
+/* General styles */
+
 html {
     height: 100%;
 }
@@ -14,16 +16,18 @@ body {
     height: 100%;
 }
 
-.hero-body {
-    padding: 4rem;
-}
-
 main {
     margin: 125px 15% 10px 15%;
 }
 
+/* Bulma style overrides */
+
 .box:not(:last-child) {
     margin-bottom: 2px;
+}
+
+.hero-body {
+    padding: 4rem;
 }
 
 .title:not(:last-child) {

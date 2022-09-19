@@ -138,16 +138,22 @@ return `
     <title>My Team</title>
 </head>
 <body>
+    <!-- Header start -->
     <header class = "hero is-danger block">
         <section class = "hero-body is-flex is-justify-content-center">
             <h1 class = "title is-1">My Team</h1>
         </section>
     </header>
+    <!-- Header end -->
+
+    <!-- Main content start -->
     <main>
         <section class="columns is-flex-wrap-wrap is-justify-content-center">
+        <!-- Cards go here!-->
             ${generateCards(employeeArr)}
         </section>
     </main>
+    <!-- Main content end-->
     
 </body>
 </html>   

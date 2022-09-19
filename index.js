@@ -8,17 +8,6 @@ const Intern = require('./lib/Intern');
 
 const employeeArr = [];
 
-/*
-TO DO:
-- refactor tests?
-- Create tests for html generation?
-- Change test inputs for tests
-- Comment the html
-- Comment the css
-- refactor inquirer prompts
-- validate empty prompt for all isNaN checks
-*/
-
 const promptUser = () => {
 
     console.log(`
