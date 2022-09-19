@@ -15,7 +15,7 @@ body {
 }
 
 main {
-    margin: 75px 15% 10px 15%;
+    margin: 125px 15% 10px 15%;
 }
 
 .box:not(:last-child) {

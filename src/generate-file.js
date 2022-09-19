@@ -32,34 +32,34 @@ main {
 `;
 
 return new Promise((resolve, reject) => {
-    fs.writeFile('./dist/index.html', fileContent, err => {
-        if(err) {
-            reject(err)
-            return;
-        } 
+fs.writeFile('./dist/index.html', fileContent, err => {
+    if(err) {
+        reject(err)
+        return;
+    } 
 
-        resolve({
-        ok: true,
-        message: `
-        ===================
-        index.html created!
-        ===================
-            `
-        })
+    resolve({
+    ok: true,
+    message: `
+    ===================
+    index.html created!
+    ===================
+        `
+    })
     })
 }).then(
-    fs.writeFile('./dist/style.css', cssContent, err => {
-        if(err) {
-            console.log(err)
-            return;
-        } else {
-        console.log(`
-        ==================
-        style.css created!
-        ==================
-        `)
-        };
-    })
+fs.writeFile('./dist/style.css', cssContent, err => {
+    if(err) {
+        console.log(err)
+        return;
+    } else {
+    console.log(`
+    ==================
+    style.css created!
+    ==================
+    `)
+    };
+})
 )
 };
 

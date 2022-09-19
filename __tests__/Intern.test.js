@@ -32,11 +32,11 @@ test("Returns string containing Employee's email", () => {
     expect(intern.getEmail()).toBe("Employee's email is Test");
 });
 
-test("Returns string containing intern's github", () => {
+test("Returns string containing intern's school", () => {
     const intern = new Intern('Test', 2, 'Test', 'Test');
 
-    expect(intern.getGitHub()).toEqual(expect.any(String));
-    expect(intern.getGitHub()).toBe("Intern's school is Test");
+    expect(intern.getSchool()).toEqual(expect.any(String));
+    expect(intern.getSchool()).toBe("Intern's school is Test");
 });
 
 test("Returns Employee's role", () => {

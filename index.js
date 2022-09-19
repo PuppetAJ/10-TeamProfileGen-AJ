@@ -11,15 +11,10 @@ const employeeArr = [];
 /*
 TO DO:
 - refactor tests?
-- Change HTML column formatting per amount of employees
-- Change label for manager from intern to manager
-- Format email and github links
 - Create tests for html generation?
 - Change test inputs for tests
 - Comment the html
 - Comment the css
-- Use regEx expression to validate email?
-- https://github.com/nicolewallace09/team-profile-generator/blob/master/index.js
 - refactor inquirer prompts
 - validate empty prompt for all isNaN checks
 */
@@ -51,9 +46,8 @@ const promptUser = () => {
             name: 'managerID',
             message: "Please enter your team manager's ID.",
             validate: idInput => {
-                if(isNaN(idInput)) {
-                    console.log('Please enter a valid ID!');
-                    return false;
+                if(isNaN(idInput) || !idInput) {
+                    return('Please enter a valid ID!');
                 } else {
                     return true;
                 }
@@ -69,8 +63,7 @@ const promptUser = () => {
                 if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter a valid email!');
-                    return false;
+                    return('Please enter a valid email!');
                 }
             }
         },
@@ -79,9 +72,8 @@ const promptUser = () => {
             name: 'managerOfficeNum',
             message: "Please enter your team manager's office number.",
             validate: officeNumInput => {
-                if(isNaN(officeNumInput)) {
-                    console.log('Please enter a valid office number!');
-                    return false;
+                if(isNaN(officeNumInput) || !idInput) {
+                    return('Please enter a valid office number!');
                 } else {
                     return true;
                 }
@@ -92,6 +84,45 @@ const promptUser = () => {
 };
 
 const promptList = promptData => {
+
+    const sendData = promptData => {
+
+        const { managerName, managerID, managerEmail, managerOfficeNum, interns, engineers } = promptData;
+
+            const manager = new Manager (managerName, managerID, managerEmail, managerOfficeNum);
+            employeeArr.push(manager);
+
+            engineers.forEach(engineer => {
+                const {engineerName, engineerID, engineerEmail, engineerGitHub} = engineer;
+                const curEngineer = new Engineer (engineerName, engineerID, engineerEmail, engineerGitHub);
+                employeeArr.push(curEngineer);
+            })
+            
+            interns.forEach(intern => {
+                const {internName, internID, internEmail, internSchool} = intern;
+                const curIntern = new Intern (internName, internID, internEmail, internSchool);
+                employeeArr.push(curIntern);
+            })
+            
+            return new Promise((resolve, reject) => {
+                resolve(
+                    generateHtml(employeeArr)
+                )
+
+                reject("HTML generation failed!");
+                
+            }) 
+            .then(formattedData => {
+                return writeFile(formattedData)
+            })
+            .then(writeFileRes => {
+                console.log(writeFileRes.message);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    };
 
     if (!promptData.engineers) {
         promptData.engineers = [];
@@ -107,7 +138,7 @@ const promptList = promptData => {
             {
                 type: 'rawlist',
                 name: 'nextEmployee',
-                message: "Please select another employee to add to your team, or finish building.",
+                message: "Please select another employee to add to your team (max 5), or finish building.",
                 choices: [
                     {value: 0, name: "Engineer"},
                     {value: 1, name: "Intern"},
@@ -116,8 +147,6 @@ const promptList = promptData => {
     
             }
         ]).then(data => { 
-            
-                console.log(promptData);
     
                 if (data.nextEmployee === 0) {
                     promptEngineer(promptData);
@@ -127,42 +156,8 @@ const promptList = promptData => {
                 }
                 if (data.nextEmployee === 2) {
 
-                    const { managerName, managerID, managerEmail, managerOfficeNum, interns, engineers } = promptData;
+                    sendData(promptData);
 
-                    const manager = new Manager (managerName, managerID, managerEmail, managerOfficeNum);
-                    employeeArr.push(manager);
-
-                    engineers.forEach(engineer => {
-                        const {engineerName, engineerID, engineerEmail, engineerGitHub} = engineer;
-                        const curEngineer = new Engineer (engineerName, engineerID, engineerEmail, engineerGitHub);
-                        employeeArr.push(curEngineer);
-                    })
-                    
-                    interns.forEach(intern => {
-                        const {internName, internID, internEmail, internSchool} = intern;
-                        const curIntern = new Intern (internName, internID, internEmail, internSchool);
-                        employeeArr.push(curIntern);
-                    })
-
-                    console.log(employeeArr);
-                    
-                    return new Promise((resolve, reject) => {
-                        resolve(
-                            generateHtml(promptData)
-                        )
-
-                        reject("HTML generation failed!");
-                        
-                    }) 
-                    .then(formattedData => {
-                        return writeFile(formattedData)
-                    })
-                    .then(writeFileRes => {
-                        console.log(writeFileRes.message);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
                 }
     
         })
@@ -171,27 +166,12 @@ const promptList = promptData => {
     console.log(`
     ======================
     Max employees reached!
+    ----------------------
+       Creating files...
     ======================
     `);
 
-    console.log(promptData);
-    return new Promise((resolve, reject) => {
-        resolve([
-            generateHtml(promptData)
-        ])
-
-        reject("HTML generation failed!")
-        
-    }) 
-    .then(formattedData => {
-        return writeFile(formattedData)
-    })
-    .then(writeFileRes => {
-        console.log(writeFileRes);
-    })
-    .catch(err => {
-        console.log(err);
-    })
+    sendData(promptData);   
 
     }
 
@@ -215,8 +195,7 @@ const promptEngineer = promptData => {
                 if (nameInput) {
                     return true;
                 } else {
-                    console.log('Please enter a name!')
-                    return false;
+                    return('Please enter a name!')
                 }
             }
 
@@ -226,9 +205,8 @@ const promptEngineer = promptData => {
             name: 'engineerID',
             message: "Please enter your engineer's ID.",
             validate: idInput => {
-                if(isNaN(idInput)) {
-                    console.log('Please enter a valid ID!');
-                    return false;
+                if(isNaN(idInput) || !idInput) {
+                    return('Please enter a valid ID!');
                 } else {
                     
                     return true;
@@ -245,8 +223,7 @@ const promptEngineer = promptData => {
                 if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter a valid email!');
-                    return false;
+                    return('Please enter a valid email!');
                 }
             }
         },
@@ -258,8 +235,7 @@ const promptEngineer = promptData => {
                 if(githubInput) {
                     return true;
                 } else {
-                    console.log('Please enter a username!');
-                    return false;
+                    return('Please enter a username!');
                 }
             }
         }
@@ -286,8 +262,7 @@ const promptIntern = promptData => {
                 if (nameInput) {
                     return true;
                 } else {
-                    console.log('Please enter a name!')
-                    return false;
+                    return('Please enter a name!')
                 }
             }
 
@@ -297,9 +272,8 @@ const promptIntern = promptData => {
             name: 'internID',
             message: "Please enter your intern's ID.",
             validate: idInput => {
-                if(isNaN(idInput)) {
-                    console.log('Please enter a valid ID!');
-                    return false;
+                if(isNaN(idInput) || !idInput) {
+                    return('Please enter a valid ID!');
                 } else {
                     
                     return true;
@@ -316,8 +290,7 @@ const promptIntern = promptData => {
                 if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter a valid email!');
-                    return false;
+                    return('Please enter a valid email!');
                 }
             }
         },
@@ -329,8 +302,7 @@ const promptIntern = promptData => {
                 if(schoolInput) {
                     return true;
                 } else {
-                    console.log('Please enter a school!');
-                    return false;
+                    return('Please enter a school!');
                 }
             }
         }
