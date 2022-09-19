@@ -1,5 +1,7 @@
+// Imports manager constructor
 const Manager = require('../lib/Manager.js');
 
+// Tests if the constructor creates an object with the correct properties
 test('Creates a manager object', () => {
     const manager = new Manager('Tom', 5, 'tom@gmail.com', 3);
 
@@ -10,6 +12,7 @@ test('Creates a manager object', () => {
     expect(manager.email).toEqual(expect.any(String));
 });
 
+// Tests if manager.getOfficeNum() returns a string containing the employee's office number
 test("Returns manager's office number", () => {
     const manager = new Manager('Tom', 5, 'tom@gmail.com', 3);
 
@@ -17,6 +20,7 @@ test("Returns manager's office number", () => {
     expect(manager.getOfficeNum()).toBe("Office Number: 3");
 });
 
+// Tests if manager.getRole() returns a string containing the employee's role
 test("Returns Employee's role", () => {
     const manager = new Manager('Tom', 5, 'tom@gmail.com', 3);
 

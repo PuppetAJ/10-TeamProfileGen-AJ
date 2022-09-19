@@ -1,15 +1,21 @@
+// Import constructors 
 const Manager = require('../lib/Manager');
 const Engineer = require('../lib/Engineer');
 const Intern = require('../lib/Intern'); 
 
+// Function containing logic for generating card HTML
 const generateCards = employeeArr => {
 
+    // Array for formatted employee HTML
     const formattedEmployees = [];
     
+    // Iterates through employee array and checks what kind of employee each is
     employeeArr.forEach(employee => {
         
+        // If employee is an instance of the manager constructor..
         if(employee instanceof Manager) {
 
+            // Format the data as html
             let managerHTML = `
             <div class = "column is-4">
             <div class = "card">
@@ -37,13 +43,15 @@ const generateCards = employeeArr => {
             </div>
             </div>
             `
-
+            // Push it to the formattedEmployees array
             formattedEmployees.push(managerHTML);
 
         }
 
+        // If employee is an instance of the engineer constructor..
         if(employee instanceof Engineer) {
             
+            // Format the data as html
             let engineerHTML = `
             <div class = "column is-4">
             <div class = "card">
@@ -71,13 +79,15 @@ const generateCards = employeeArr => {
             </div>
             </div>
             `
-
+            // Push it to the formattedEmployees array
             formattedEmployees.push(engineerHTML);
 
         }
 
+        // If employee is an instance of the intern constructor..
         if(employee instanceof Intern) {
 
+            // Format the data as html
             let internHTML = `
             <div class = "column is-4">
             <div class = "card">
@@ -105,17 +115,20 @@ const generateCards = employeeArr => {
             </div>
             </div>
             `
-
+            // Push it to the formattedEmployees array
             formattedEmployees.push(internHTML);
         }
     })
 
+    // Once all data is added to new array, join it as one string and return it
     return formattedEmployees.join('');
 
 };
 
+// Export function, takes employeeArr as paramater
 module.exports = employeeArr => {
 
+// Returns base html, and calls generateCards function to add card HTML using employeeArr as data
 return `
 <!DOCTYPE html>
 <html lang="en">

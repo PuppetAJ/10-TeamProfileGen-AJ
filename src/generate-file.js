@@ -1,7 +1,10 @@
+// Imports file system module
 const fs = require('fs');
 
+// logic for write file function
 const writeFile = fileContent => {
 
+// Variable containing css files content
 let cssContent = `
 /* General styles */
 
@@ -35,6 +38,7 @@ main {
 }
 `;
 
+// Creates a new promise which resolves once index.html is created and rejects when there is an error
 return new Promise((resolve, reject) => {
 fs.writeFile('./dist/index.html', fileContent, err => {
     if(err) {
@@ -52,6 +56,7 @@ fs.writeFile('./dist/index.html', fileContent, err => {
     })
     })
 }).then(
+// After index.html is created, create css file
 fs.writeFile('./dist/style.css', cssContent, err => {
     if(err) {
         console.log(err)
@@ -67,4 +72,5 @@ fs.writeFile('./dist/style.css', cssContent, err => {
 )
 };
 
+// Exports writeFile function
 module.exports = { writeFile };
