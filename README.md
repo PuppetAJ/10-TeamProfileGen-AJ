@@ -47,7 +47,7 @@ Once all dependencies have been downloaded, you can execute index.js by typing n
 
 ![](./src/assets/images/preview.jpg)
 
-* [See Video 1:](https://www.youtube.com/watch?v=uCUpvTMis-Y)
+* [See Video 1:](https://drive.google.com/file/d/1QkODhZUfiA7g_a0RDtzsZ11qeFIk8cOI/view?usp=sharing)
 
 In order to use this project, start by calling the index.js file using node index.js. Once this is done, you should be prompted with questions to fill out in the terminal. Fill these questions out as thoroughly as possible, and once all questions have been answered an index.html and style.css file should be generated in the dist folder contained in the package.
 
