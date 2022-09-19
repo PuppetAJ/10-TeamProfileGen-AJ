@@ -1,4 +1,4 @@
-# Module 10
+# Team Profile Generator Challenge
 
 
 ![](https://img.shields.io/badge/License-MIT-green)
