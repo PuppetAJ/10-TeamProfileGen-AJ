@@ -1,4 +1,28 @@
 const inquirer = require('inquirer');
+const generateHtml = require('./src/template');
+const { writeFile } = require('./src/generate-file');
+
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern'); 
+
+const employeeArr = [];
+
+/*
+TO DO:
+- refactor tests?
+- Change HTML column formatting per amount of employees
+- Change label for manager from intern to manager
+- Format email and github links
+- Create tests for html generation?
+- Change test inputs for tests
+- Comment the html
+- Comment the css
+- Use regEx expression to validate email?
+- https://github.com/nicolewallace09/team-profile-generator/blob/master/index.js
+- refactor inquirer prompts
+- validate empty prompt for all isNaN checks
+*/
 
 const promptUser = () => {
 
@@ -17,8 +41,8 @@ const promptUser = () => {
                 if (nameInput) {
                     return true;
                 } else {
-                    console.log('Please enter a name!')
-                    return false;
+                    return('Please enter a name!')
+                    // return false;
                 }
             }
         },
@@ -27,11 +51,11 @@ const promptUser = () => {
             name: 'managerID',
             message: "Please enter your team manager's ID.",
             validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please enter a valid ID!')
+                if(isNaN(idInput)) {
+                    console.log('Please enter a valid ID!');
                     return false;
+                } else {
+                    return true;
                 }
             }
         },
@@ -40,10 +64,12 @@ const promptUser = () => {
             name: 'managerEmail',
             message: "Please enter your team manager's email.",
             validate: emailInput => {
-                if(emailInput) {
+                // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+                valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput);
+                if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter an email!');
+                    console.log('Please enter a valid email!');
                     return false;
                 }
             }
@@ -53,11 +79,11 @@ const promptUser = () => {
             name: 'managerOfficeNum',
             message: "Please enter your team manager's office number.",
             validate: officeNumInput => {
-                if(officeNumInput) {
-                    return true;
-                } else {
+                if(isNaN(officeNumInput)) {
                     console.log('Please enter a valid office number!');
                     return false;
+                } else {
+                    return true;
                 }
             }
         },
@@ -67,46 +93,112 @@ const promptUser = () => {
 
 const promptList = promptData => {
 
-    return inquirer.prompt([
-        {
-            type: 'rawlist',
-            name: 'nextEmployee',
-            message: "Please select another employee to add to your team, or finish building.",
-            choices: [
-                {value: 0, name: "Engineer"},
-                {value: 1, name: "Intern"},
-                {value: 2, name: "Finish building team"}
-            ]
+    if (!promptData.engineers) {
+        promptData.engineers = [];
+    }
 
-        }
-    ]).then(data => {
-        if (promptData.engineers.length + promptData.interns.length === 4) {
+    if (!promptData.interns) {
+        promptData.interns = [];
+    }
 
-            console.log(promptData);
+    if (promptData.engineers.length + promptData.interns.length < 4) {
+
+        return inquirer.prompt([
+            {
+                type: 'rawlist',
+                name: 'nextEmployee',
+                message: "Please select another employee to add to your team, or finish building.",
+                choices: [
+                    {value: 0, name: "Engineer"},
+                    {value: 1, name: "Intern"},
+                    {value: 2, name: "Finish building team"}
+                ]
+    
+            }
+        ]).then(data => { 
             
-        } else {
-
-            if (data.nextEmployee === 0) {
-                promptEngineer(promptData);
-            }
-            if (data.nextEmployee === 1) {
-                promptIntern(promptData);
-            }
-            if (data.nextEmployee === 2) {
-                // return promptData;
                 console.log(promptData);
-            }
+    
+                if (data.nextEmployee === 0) {
+                    promptEngineer(promptData);
+                }
+                if (data.nextEmployee === 1) {
+                    promptIntern(promptData);
+                }
+                if (data.nextEmployee === 2) {
 
-        }
+                    const { managerName, managerID, managerEmail, managerOfficeNum, interns, engineers } = promptData;
 
+                    const manager = new Manager (managerName, managerID, managerEmail, managerOfficeNum);
+                    employeeArr.push(manager);
+
+                    engineers.forEach(engineer => {
+                        const {engineerName, engineerID, engineerEmail, engineerGitHub} = engineer;
+                        const curEngineer = new Engineer (engineerName, engineerID, engineerEmail, engineerGitHub);
+                        employeeArr.push(curEngineer);
+                    })
+                    
+                    interns.forEach(intern => {
+                        const {internName, internID, internEmail, internSchool} = intern;
+                        const curIntern = new Intern (internName, internID, internEmail, internSchool);
+                        employeeArr.push(curIntern);
+                    })
+
+                    console.log(employeeArr);
+                    
+                    return new Promise((resolve, reject) => {
+                        resolve(
+                            generateHtml(promptData)
+                        )
+
+                        reject("HTML generation failed!");
+                        
+                    }) 
+                    .then(formattedData => {
+                        return writeFile(formattedData)
+                    })
+                    .then(writeFileRes => {
+                        console.log(writeFileRes.message);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                }
+    
+        })
+
+    } else {
+    console.log(`
+    ======================
+    Max employees reached!
+    ======================
+    `);
+
+    console.log(promptData);
+    return new Promise((resolve, reject) => {
+        resolve([
+            generateHtml(promptData)
+        ])
+
+        reject("HTML generation failed!")
+        
+    }) 
+    .then(formattedData => {
+        return writeFile(formattedData)
     })
+    .then(writeFileRes => {
+        console.log(writeFileRes);
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+    }
+
+    
 };
 
 const promptEngineer = promptData => {
-
-    if(!promptData.engineers) {
-        promptData.engineers = [];
-    }
 
     console.log(`
     =============
@@ -134,11 +226,12 @@ const promptEngineer = promptData => {
             name: 'engineerID',
             message: "Please enter your engineer's ID.",
             validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please enter a valid ID!')
+                if(isNaN(idInput)) {
+                    console.log('Please enter a valid ID!');
                     return false;
+                } else {
+                    
+                    return true;
                 }
             }
         },
@@ -147,10 +240,12 @@ const promptEngineer = promptData => {
             name: 'engineerEmail',
             message: "Please enter your engineer's email.",
             validate: emailInput => {
-                if(emailInput) {
+                // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+                valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput);
+                if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter an email!');
+                    console.log('Please enter a valid email!');
                     return false;
                 }
             }
@@ -158,7 +253,7 @@ const promptEngineer = promptData => {
         {
             type: 'input',
             name: 'engineerGitHub',
-            message: "Please enter your engineer's github.",
+            message: "Please enter your engineer's github username.",
             validate: githubInput => {
                 if(githubInput) {
                     return true;
@@ -175,10 +270,6 @@ const promptEngineer = promptData => {
 };
 
 const promptIntern = promptData => {
-
-    if(!promptData.interns) {
-        promptData.interns = [];
-    }
 
     console.log(`
     ===========
@@ -206,11 +297,12 @@ const promptIntern = promptData => {
             name: 'internID',
             message: "Please enter your intern's ID.",
             validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please enter a valid ID!')
+                if(isNaN(idInput)) {
+                    console.log('Please enter a valid ID!');
                     return false;
+                } else {
+                    
+                    return true;
                 }
             }
         },
@@ -219,10 +311,12 @@ const promptIntern = promptData => {
             name: 'internEmail',
             message: "Please enter your intern's email.",
             validate: emailInput => {
-                if(emailInput) {
+                // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+                valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput);
+                if(valid) {
                     return true;
                 } else {
-                    console.log('Please enter an email!');
+                    console.log('Please enter a valid email!');
                     return false;
                 }
             }
