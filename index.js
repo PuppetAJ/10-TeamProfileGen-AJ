@@ -66,7 +66,7 @@ const promptUser = () => {
             name: 'managerOfficeNum',
             message: "Please enter your team manager's office number.",
             validate: officeNumInput => {
-                if(isNaN(officeNumInput) || !idInput) {
+                if(isNaN(officeNumInput) || !officeNumInput) {
                     return('Please enter a valid office number!');
                 } else {
                     return true;
